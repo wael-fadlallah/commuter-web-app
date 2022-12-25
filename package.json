@@ -2,6 +2,7 @@
   "name": "commuter",
   "version": "0.1.0",
   "private": true,
+  "description": "A web app to calculate the annual commuting cost and time between your office and home",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
