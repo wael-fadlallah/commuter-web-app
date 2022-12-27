@@ -15,7 +15,7 @@ type MapOptions = google.maps.MapOptions;
 export default function Map() {
   const [office, setOffice] = useState<LatLngLiteral>();
   const mapRef = useRef<GoogleMap>();
-  const center = useMemo<LatLngLiteral>(() => ({ lat: 43, lng: -80 }), []);
+  const center = useMemo<LatLngLiteral>(() => ({ lat: 25.187655, lng: 55.264528 }), []);
   const options = useMemo<MapOptions>(
     () => ({
       disableDefaultUI: false,
@@ -25,7 +25,7 @@ export default function Map() {
     []
   );
 
-  const onLoad = useCallback((map: any) => (mapRef.current = map), []);
+  const onLoad = useCallback((map: any) => mapRef.current = map, []);
   return (
     <div className="container">
       <div className="controls">
@@ -38,12 +38,14 @@ export default function Map() {
       </div>
       <div className="map">
         <GoogleMap
-          zoom={10}
+          zoom={11}
           center={center}
           mapContainerClassName={"map-container"}
           options={options}
           onLoad={onLoad}
-        ></GoogleMap>
+        >
+          {office && <Marker position={office} icon={'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'} />}
+        </GoogleMap>
       </div>
     </div>
   );
