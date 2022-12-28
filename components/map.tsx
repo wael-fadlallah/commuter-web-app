@@ -1,4 +1,11 @@
-import { useState, useMemo, useCallback, useRef, Ref } from "react";
+import {
+  useState,
+  useMemo,
+  useCallback,
+  useRef,
+  Ref,
+  SetStateAction,
+} from "react";
 import {
   GoogleMap,
   Marker,
@@ -14,27 +21,53 @@ type MapOptions = google.maps.MapOptions;
 
 export default function Map() {
   const [office, setOffice] = useState<LatLngLiteral>();
+  const [direction, setDirection] = useState<DirectionsResult>();
   const mapRef = useRef<GoogleMap>();
-  const center = useMemo<LatLngLiteral>(() => ({ lat: 25.187655, lng: 55.264528 }), []);
+  const center = useMemo<LatLngLiteral>(
+    () => ({ lat: 25.187655, lng: 55.264528 }),
+    []
+  );
   const options = useMemo<MapOptions>(
     () => ({
       disableDefaultUI: false,
       clickableIcons: false,
-      mapId: 'd33ad7bc60829d6d',
+      mapId: "d33ad7bc60829d6d",
     }),
     []
   );
 
-  const onLoad = useCallback((map: any) => mapRef.current = map, []);
+  const onLoad = useCallback((map: any) => (mapRef.current = map), []);
+
+  const houses = useMemo(() => generateHouses(center), [center]);
+
+  const fetchDirection = (house: LatLngLiteral) => {
+    if (!office) return;
+
+    const service = new google.maps.DirectionsService();
+    service.route(
+      {
+        origin: house,
+        destination: office,
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (results, status) => {
+        if (status === "OK" && results) {
+          setDirection(results);
+        }
+      }
+    );
+  };
   return (
     <div className="container">
       <div className="controls">
         <h1>commute?</h1>
 
-        <Places setOffice={(position) => {
-          setOffice(position);
-          mapRef.current?.panTo(position);
-        }} />
+        <Places
+          setOffice={(position) => {
+            setOffice(position);
+            mapRef.current?.panTo(position);
+          }}
+        />
       </div>
       <div className="map">
         <GoogleMap
@@ -44,7 +77,47 @@ export default function Map() {
           options={options}
           onLoad={onLoad}
         >
-          {office && <Marker position={office} icon={'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png'} />}
+          {direction && (
+            <DirectionsRenderer
+              directions={direction}
+              options={{
+                polylineOptions: {
+                  zIndex: 50,
+                  strokeColor: "#1976d2",
+                  strokeWeight: 5,
+                },
+              }}
+            />
+          )}
+          {office && (
+            <>
+              <Circle center={office} radius={8000} options={closeOptions} />
+              <Circle center={office} radius={20000} options={middleOptions} />
+              <Circle center={office} radius={30000} options={farOptions} />
+              <Marker
+                position={office}
+                icon={
+                  "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
+                }
+              />
+              <MarkerClusterer>
+                {(clusterer) => (
+                  <>
+                    {houses.map((house) => (
+                      <Marker
+                        key={house.lat}
+                        position={house}
+                        clusterer={clusterer}
+                        onClick={() => {
+                          fetchDirection(house);
+                        }}
+                      />
+                    ))}
+                  </>
+                )}
+              </MarkerClusterer>
+            </>
+          )}
         </GoogleMap>
       </div>
     </div>
