@@ -21,7 +21,7 @@ type MapOptions = google.maps.MapOptions;
 
 export default function Map() {
   const [office, setOffice] = useState<LatLngLiteral>();
-  const [direction, setDirection] = useState<DirectionsResult>();
+  const [directions, setDirection] = useState<DirectionsResult>();
   const mapRef = useRef<GoogleMap>();
   const center = useMemo<LatLngLiteral>(
     () => ({ lat: 25.187655, lng: 55.264528 }),
@@ -67,7 +67,9 @@ export default function Map() {
             setOffice(position);
             mapRef.current?.panTo(position);
           }}
-        />
+          />
+          { !office && <p>Enter the address of your office.</p>}
+          { directions && <Distance leg={directions?.routes[0].legs[0]} />}
       </div>
       <div className="map">
         <GoogleMap
@@ -77,9 +79,9 @@ export default function Map() {
           options={options}
           onLoad={onLoad}
         >
-          {direction && (
+          {directions && (
             <DirectionsRenderer
-              directions={direction}
+              directions={directions}
               options={{
                 polylineOptions: {
                   zIndex: 50,
