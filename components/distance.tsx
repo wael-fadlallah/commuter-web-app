@@ -23,11 +23,11 @@ export default function Distance({ leg }: DistanceProps) {
       <p>
         This Home is <span className="highlight"> {leg.distance.text} </span>
       </p>
-      from your office. that would take{" "}
-      <span className="highlight">{leg.duration.text} </span>
+      from your office. that would take
+      <span className="highlight"> {leg.duration.text} </span>
       each direction.
       <p>
-        that's <span className="highlight">{days} days</span> in your car each
+        that&apos;s <span className="highlight">{days} days</span> in your car each
         year at a cost of <span className="highlight">{new Intl.NumberFormat().format(cost)} AED</span>
       </p>
     </div>
