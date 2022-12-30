@@ -33,7 +33,8 @@ export default function Places({ setOffice }: PlacesProps) {
     setOffice({lat, lng});
   }
   return (
-    <Combobox onSelect={handleSelect}>
+    <div className="places">
+      <Combobox onSelect={handleSelect}>
       <ComboboxInput
         value={value}
         onChange={(e) => setValue(e.target.value)}
@@ -47,5 +48,6 @@ export default function Places({ setOffice }: PlacesProps) {
         </ComboboxList>
       </ComboboxPopover>
     </Combobox>
+    </div>
   );
 }

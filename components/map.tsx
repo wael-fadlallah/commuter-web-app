@@ -38,7 +38,7 @@ export default function Map() {
 
   const onLoad = useCallback((map: any) => (mapRef.current = map), []);
 
-  const houses = useMemo(() => generateHouses(center), [center]);
+  const houses = useMemo(() => generateHouses(office ?? center), [office]);
 
   const fetchDirection = (house: LatLngLiteral) => {
     if (!office) return;
